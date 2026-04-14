@@ -1,12 +1,11 @@
 package utils
 
 import (
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
-
-var jwtSecret = []byte("supersecretkey") // later move to env
 
 type Claims struct {
 	UserID int    `json:"user_id"`
@@ -15,6 +14,8 @@ type Claims struct {
 }
 
 func GenerateToken(userID int, email string) (string, error) {
+	secret := os.Getenv("JWT_SECRET")
+
 	claims := Claims{
 		UserID: userID,
 		Email:  email,
@@ -24,5 +25,5 @@ func GenerateToken(userID int, email string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtSecret)
+	return token.SignedString([]byte(secret))
 }
