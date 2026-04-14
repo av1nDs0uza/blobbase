@@ -42,15 +42,18 @@ func Login(c *gin.Context) {
 	}
 
 	if err := c.BindJSON(&body); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid input"})
+		c.JSON(400, gin.H{"error": "invalid input"})
 		return
 	}
 
-	err := service.LoginUser(body.Email, body.Password)
+	token, err := service.LoginUser(body.Email, body.Password)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		c.JSON(401, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "login successful"})
+	c.JSON(200, gin.H{
+		"message": "login successful",
+		"token":   token,
+	})
 }
