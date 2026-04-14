@@ -20,6 +20,7 @@ func main() {
 			"status": "running",
 		})
 	})
+	r.POST("/login", handler.Login)
 	r.POST("/register", handler.Register)
 
 	log.Println("Server started on :8081")

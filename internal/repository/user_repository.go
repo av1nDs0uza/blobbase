@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"filestorage/internal/config"
-
 	appErr "filestorage/internal/errors"
+	"filestorage/internal/model"
 
 	"github.com/jackc/pgx/v5/pgconn"
 )
@@ -35,4 +35,20 @@ func CreateUser(email, password string) error {
 	}
 
 	return nil
+}
+func GetUserByEmail(email string) (model.User, error) {
+	var user model.User
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	query := `SELECT id, email, password FROM users WHERE email=$1`
+
+	err := config.DB.QueryRow(ctx, query, email).Scan(
+		&user.ID,
+		&user.Email,
+		&user.Password,
+	)
+
+	return user, err
 }
